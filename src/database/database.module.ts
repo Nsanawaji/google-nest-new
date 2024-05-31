@@ -1,12 +1,16 @@
 import { Controller, Module } from "@nestjs/common"
-import { MongooseModule } from "@nestjs/mongoose";
+import { ConfigService } from "@nestjs/config";
+import { MongooseModule, MongooseModuleOptions } from "@nestjs/mongoose";
 @Module({
   imports: [
-    MongooseModule.forRoot(
-      'mongodb+srv://nsanawajiotuekong:UctCFexIXA2VaWQY@cluster0.vvgqnrp.mongodb.net/google-nest',
-    ),
+    MongooseModule.forRootAsync({
+      useFactory: async (configService: ConfigService,): Promise<any> => ({
+        uri: configService.get<string>('MONGODB_URL'),
+      }),
+      inject: [ConfigService]
+    }),
   ],
   controllers: [],
-  providers: [],
+  providers: [ConfigService],
 })
 export class DatabaseModule {}
